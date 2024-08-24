@@ -85,5 +85,5 @@ jobs:
       # Step 4: Move file from Source to Destination S3 Bucket
       - name: Move file from Source to Destination S3 Bucket
         run: |
-          aws s3 cp s3://spdh-src-bucket245254/file.txt s3://spdh-dest-bucket0178566e/file.txt
+          aws s3 cp s3://spdh-src-bucket245254/file.txt s3://spdh-dest-bucket0178566/file.txt
           aws s3 rm s3://spdh-src-bucket245254/file.txt
