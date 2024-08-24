@@ -1,4 +1,4 @@
-name: Terraform CI/CD
+name: Terraform CI/CD and S3 File Transfer
 
 on:
   push:
@@ -28,60 +28,62 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }} # Specify your AWS region
 
+      # Step 4: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-         python-version: '3.8'
+          python-version: '3.8'
     
+      # Step 5: Install dependencies
       - name: Install dependencies
         run: |
-         python -m pip install --upgrade pip
-         pip install boto3
+          python -m pip install --upgrade pip
+          pip install boto3
 
+      # Step 6: Create lambda.zip
       - name: Create lambda.zip
         run: |
-         zip -j lambda.zip lambda_function.py
+          zip -j lambda.zip lambda_function.py
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-         terraform_wrapper: false
-
+      # Step 7: Initialize Terraform
       - name: Terraform Init
         run: terraform init
 
+      # Step 8: Validate Terraform
       - name: Terraform Validate
         run: terraform validate
 
+      # Step 9: Plan Terraform
       - name: Terraform Plan
         run: terraform plan
 
+      # Step 10: Apply Terraform
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        
-name: S3 File Transfer
 
-jobs:
-  upload-and-move-file:
+  s3_file_transfer:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up AWS CLI
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+      # Step 2: Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Upload file to Source S3 Bucket
-      run: |
-        aws s3 cp path/to/your/file.txt s3://spdh-src-bucket245254/file.txt
+      # Step 3: Upload file to Source S3 Bucket
+      - name: Upload file to Source S3 Bucket
+        run: |
+          aws s3 cp path/to/your/file.txt s3://spdh-src-bucket245254/file.txt
 
-    - name: Move file from Source to Destination S3 Bucket
-      run: |
-        aws s3 cp s3://spdh-src-bucket245254/file.txt s3://spdh-dest-bucket0178566/file.txt
-        aws s3 rm s3://spdh-src-bucket245254/file.txt
-
+      # Step 4: Move file from Source to Destination S3 Bucket
+      - name: Move file from Source to Destination S3 Bucket
+        run: |
+          aws s3 cp s3://spdh-src-bucket245254/file.txt s3://spdh-dest-bucket0178566e/file.txt
+          aws s3 rm s3://spdh-src-bucket245254/file.txt
