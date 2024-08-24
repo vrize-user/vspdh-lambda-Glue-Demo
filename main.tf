@@ -1,11 +1,11 @@
 # Step 1: Set Up S3 Buckets
 resource "aws_s3_bucket" "source_bucket" {
-  bucket = "spdh-src-bucket"
+  bucket = "spdh-src-bucket245254"
   acl    = "private"
 }
 
 resource "aws_s3_bucket" "destination_bucket" {
-  bucket = "spdh-dest-bucket"
+  bucket = "spdh-dest-bucket0178566"
   acl    = "private"
 }
 
