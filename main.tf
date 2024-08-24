@@ -1,11 +1,11 @@
 # Step 1: Set Up S3 Buckets
 resource "aws_s3_bucket" "source_bucket" {
-  bucket = "spdh-src-bucket123"
+  bucket = "spdh-src-bucket"
   acl    = "private"
 }
 
 resource "aws_s3_bucket" "destination_bucket" {
-  bucket = "spdh-dest-bucket345"
+  bucket = "spdh-dest-bucket"
   acl    = "private"
 }
 
@@ -17,8 +17,8 @@ resource "aws_iam_role" "lambda_role" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
         Principal = {
           Service = "lambda.amazonaws.com"
         }
@@ -32,8 +32,8 @@ resource "aws_iam_role" "lambda_role" {
       Version = "2012-10-17"
       Statement = [
         {
-          Effect = "Allow"
-          Action = [
+          Effect   = "Allow"
+          Action   = [
             "s3:GetObject",
             "s3:PutObject",
             "s3:DeleteObject"
@@ -44,8 +44,8 @@ resource "aws_iam_role" "lambda_role" {
           ]
         },
         {
-          Effect = "Allow"
-          Action = [
+          Effect   = "Allow"
+          Action   = [
             "logs:CreateLogGroup",
             "logs:CreateLogStream",
             "logs:PutLogEvents"
@@ -65,8 +65,7 @@ resource "aws_lambda_function" "s3_file_mover" {
   runtime       = "python3.8"
 
   # Define the S3 bucket and key where your Lambda function code is stored
-  filename      = "lambda.zip"
-
+  filename         = "lambda.zip"
   source_code_hash = filebase64sha256("lambda.zip")
 
   environment {
@@ -89,8 +88,8 @@ resource "aws_glue_job" "example" {
     script_location = "s3://my-script-bucket/my-script.py"
   }
   default_arguments = {
-    "--TempDir"      = "s3://my-temp-dir/"
-    "--job-bookmark-option" = "job-bookmark-enable"
+    "--TempDir"               = "s3://my-temp-dir/"
+    "--job-bookmark-option"   = "job-bookmark-enable"
   }
 }
 
