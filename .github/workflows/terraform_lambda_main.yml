@@ -80,7 +80,7 @@ jobs:
       # Step 3: Upload file to Source S3 Bucket
       - name: Upload file to Source S3 Bucket
         run: |
-          aws s3 cp path/to/your/file.txt s3://spdh-src-bucket245254/file.txt
+          aws s3 cp file.txt s3://spdh-src-bucket245254/file.txt
 
       # Step 4: Move file from Source to Destination S3 Bucket
       - name: Move file from Source to Destination S3 Bucket
