@@ -94,15 +94,6 @@ resource "aws_glue_job" "example" {
 }
 
 # Step 5: Set Up Event Notification for S3 Bucket
-resource "aws_s3_bucket_notification" "s3_notification" {
-  bucket = aws_s3_bucket.source_bucket.id
-
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.s3_file_mover.arn
-    events              = ["s3:ObjectCreated:*"]
-    filter_suffix       = ".txt"
-  }
-}
 
 # Grant permission for the S3 bucket to invoke the Lambda function
 resource "aws_lambda_permission" "allow_s3_invocation" {
@@ -111,5 +102,18 @@ resource "aws_lambda_permission" "allow_s3_invocation" {
   function_name = aws_lambda_function.s3_file_mover.function_name
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.source_bucket.arn
+}
+
+# Create the S3 bucket notification with a dependency on Lambda permission
+resource "aws_s3_bucket_notification" "s3_notification" {
+  bucket = aws_s3_bucket.source_bucket.id
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.s3_file_mover.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_suffix       = ".txt"
+  }
+
+  depends_on = [aws_lambda_permission.allow_s3_invocation]
 }
 
